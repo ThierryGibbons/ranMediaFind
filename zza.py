@@ -11,7 +11,7 @@ from tkinter import *
 #   WINDOW                              <- Window
 #   --------------
 window = Tk()                                                   #   Create blank window
-window.geometry('300x100')                                      #   Set window size
+window.geometry('300x150')                                      #   Set window size
 window.title("ranMediaFind")                                    #   Window Title
 windowTitle = Label(window, text="Open random jonVid")          #   Create Label
 windowTitle.pack()                                              #   Set label location
