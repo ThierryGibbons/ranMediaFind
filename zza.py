@@ -1,5 +1,4 @@
-#   --------------
-#   Imports
+#   IMPORTS
 #   --------------
 import os
 from os import startfile
@@ -7,31 +6,34 @@ import random
 import glob
 import pygame
 import pygame_gui
+#   /IMPORTS
+#   --------------
 
-#   --------------
-#   WINDOW                              <- Window
-#   --------------
-#window = Tk()                                                   #   Create blank window
-#window.geometry('300x150')                                      #   Set window size
-#window.title("ranMediaFind")                                    #   Window Title
-#windowTitle = Label(window, text="Open random jonVid")          #   Create Label
-#windowTitle.pack()                                              #   Set label location
-
-#   --------------
-#   pygame
+#   PYGAME
 #   --------------
 pygame.init()                                                   #   Start pygame
 
 pygame.display.set_caption('ranMediaFind')                      #   Title window
-window_surface = pygame.display.set_mode((300, 150))            #   Set window size
+window_surface = pygame.display.set_mode((300, 400))            #   Set window size (300, 150) not (800, 600)
 
-background = pygame.Surface(300, 150)                           #   Window inner size
+background = pygame.Surface((300, 400))                         #   Window inner size
 background.fill(pygame.Color('#000000'))                        #   Set window background to black
 
-manager = pygame_gui.UIManager((300, 150))                      #   Create a UIManger
+manager = pygame_gui.UIManager((300, 400))                      #   Create a UIManger
+
+genButton = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((100, 50), (100, 50)),
+                                            text='Generate',
+                                            manager=manager)
+
+filterList = ['no filter', 'movies', 'shorts', 'tv shows']
+
+filterMenu = pygame_gui.elements.UIDropDownMenu(options_list=filterList, starting_option='Filter',
+                                                relative_rect=pygame.Rect((100,100), (100,50)),
+                                                manager=manager)
 
 clock = pygame.time.Clock()                                     #   Create clock
 is_running = True                                               #   Set variable, is_running, to true
+
 
 while is_running:                                               #   Loop while is_running = True
 
@@ -41,6 +43,81 @@ while is_running:                                               #   Loop while i
         if event.type == pygame.QUIT:                                           #   Check for event: pygame.QUIT
             is_running = False                                                      #   Stop program
 
+
+        #   DROPDOWN MENU CHANGE
+        #   --------------
+        if event.type == pygame.USEREVENT:
+            if event.user_type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+                global filterSel
+                filterSel = event.text
+
+
+        #   BUTTON PUSH
+        #   --------------
+        if event.type == pygame.USEREVENT:                                      #   Listen for pygame user event
+            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:                    #   Check if any button was pressed
+                if event.ui_element == genButton:                                      #   Check if button was genButton
+                    vids = []
+                    if filterSel == 'movies':
+                        print('Finding Movie')
+                        for jonVid in glob.glob("./media/movies/**/*.jonVid", recursive = True):
+                            vids.append(jonVid)
+
+                        rFile = vids[random.randint(0, len(vids))]
+
+                        print(rFile)
+
+                        print("Opening: " +                                                     #   Display button press
+                         (os.path.splitext(os.path.basename(rFile))[0]))                        #   Shows the name of file opened with out the directory or the file extension
+
+                        startfile(rFile)
+
+                    elif filterSel == 'shorts':
+                        print('Finding Short')
+                        for jonVid in glob.glob("./media/shorts/**/*.jonVid", recursive = True):
+                            vids.append(jonVid)
+
+                        rFile = vids[random.randint(0, len(vids))]
+
+                        print(rFile)
+
+                        print("Opening: " +                                                     #   Display button press
+                         (os.path.splitext(os.path.basename(rFile))[0]))                        #   Shows the name of file opened with out the directory or the file extension
+
+                        startfile(rFile)
+
+                    elif filterSel == 'tv shows':
+                        print('Finding TV show')
+                        for jonVid in glob.glob("./media/tvshows/**/*.jonVid", recursive = True):
+                            vids.append(jonVid)
+
+                        rFile = vids[random.randint(0, len(vids))]
+
+                        print(rFile)
+
+                        print("Opening: " +                                                     #   Display button press
+                         (os.path.splitext(os.path.basename(rFile))[0]))                        #   Shows the name of file opened with out the directory or the file extension
+
+                        startfile(rFile)
+
+                    else:
+
+                        for jonVid in glob.glob("./media/**/*.jonVid", recursive = True):
+                             vids.append(jonVid)
+
+                        rFile = vids[random.randint(0, len(vids))]
+
+                        print('No filter')
+
+                        print(rFile)
+
+                        print("Opening: " +                                                     #   Display button press
+                         (os.path.splitext(os.path.basename(rFile))[0]))                        #   Shows the name of file opened with out the directory or the file extension
+
+                        startfile(rFile)
+        #   /BUTTON PUSH
+        #   --------------
+
         manager.process_events(event)                                           #  Load events through the UIManager
 
     manager.update(time_delta)                                              #   Connect UIManger with time
@@ -49,40 +126,5 @@ while is_running:                                               #   Loop while i
     manager.draw_ui(window_surface)                             #   Create ui within the UIManager
 
     pygame.display.update()                                     #   Load pygame update
-
-#   --------------
-#   BUTTON                              <- Button
-#   --------------
-#def genBtn():                                                   #   Define button press command
+    #   /PYGAME
     #   --------------
-    #   Find random .jonVid             <- Find random .jonVid
-    #   --------------
- #   vids = []                                                               #   Create list
-
- #   for jonVid in glob.glob("./media/**/*.jonVid", recursive = True):       #   Grab all files inside ./media with the file extension .jonVid
- #       vids.append(jonVid)                                                    #   Pack every occurance into the list vids
-
-#    rFile = vids[random.randint(0, len(vids))]                              #   Grab random vid from list
-#    print(rFile)                                                            #   Print random vid
-
-#    windowTitle.configure(text="Opening: \n" +                              #   Display button press
-#     (os.path.splitext(os.path.basename(rFile))[0]))                        #   Shows the name of file opened with out the directory or the file extension
-
-#    startfile(rFile)                                                        #   Open random vid
-
-#gen = Button(window, text="Generate", command=genBtn)           #   Display generate button
-#gen.pack()                                                      #   Allign button
-
-#   --------------
-#   TEXT BOX                            <- Text box
-#   --------------
-#findTitle = Label(window, text="\nFind jonVid")                 #   Create new label with the text Find jonVid
-#findTitle.pack()                                                #   Allign new label
-#find = Entry(window, width=10)                                  #   Create text box
-#find.pack()                                                     #   Allign new text box
-
-
-#   --------------
-#   DISPLAY WINDOW                      <- Display window
-#   --------------
-#window.mainloop()                                               #   Start window
