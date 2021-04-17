@@ -9,6 +9,9 @@ import pygame_gui
 #   /IMPORTS
 #   --------------
 
+filterSel = []
+menuChanged = False
+
 #   PYGAME
 #   --------------
 pygame.init()                                                   #   Start pygame
@@ -34,6 +37,8 @@ filterMenu = pygame_gui.elements.UIDropDownMenu(options_list=filterList, startin
 clock = pygame.time.Clock()                                     #   Create clock
 is_running = True                                               #   Set variable, is_running, to true
 
+def noSpace(string):
+    return string.replace(" ", "")
 
 while is_running:                                               #   Loop while is_running = True
 
@@ -46,75 +51,50 @@ while is_running:                                               #   Loop while i
 
         #   DROPDOWN MENU CHANGE
         #   --------------
+
+        
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
-                global filterSel
-                filterSel = event.text
-
-
+                if noSpace(event.text)=='movies' or noSpace(event.text)=='shorts' or noSpace(event.text)=='tvshows':
+                    print('Selected:  ', event.text)
+                    filterSel = event.text
+                    menuChanged = True
+                if noSpace(event.text)=='nofilter':
+                    menuChanged = False
+                
         #   BUTTON PUSH
         #   --------------
         if event.type == pygame.USEREVENT:                                      #   Listen for pygame user event
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:                    #   Check if any button was pressed
                 if event.ui_element == genButton:                                      #   Check if button was genButton
                     vids = []
-                    if filterSel == 'movies':
-                        print('Finding Movie')
-                        for jonVid in glob.glob("./media/movies/**/*.jonVid", recursive = True):
-                            vids.append(jonVid)
 
-                        rFile = vids[random.randint(0, len(vids))]
+                    if menuChanged == True:
+                        print('Finding ', filterSel)
+                        if filterSel=='movies' or filterSel=='shorts' or filterSel=='tv shows':
+                            for jonVid in glob.glob('media/' + noSpace(filterSel) + '/**/*.jonVid', recursive = True):
+                                vids.append(jonVid)
+                            
+                            rFile = vids[random.randint(0, len(vids))]
+                            print(rFile)
 
-                        print(rFile)
-
-                        print("Opening: " +                                                     #   Display button press
-                         (os.path.splitext(os.path.basename(rFile))[0]))                        #   Shows the name of file opened with out the directory or the file extension
-
-                        startfile(rFile)
-
-                    elif filterSel == 'shorts':
-                        print('Finding Short')
-                        for jonVid in glob.glob("./media/shorts/**/*.jonVid", recursive = True):
-                            vids.append(jonVid)
-
-                        rFile = vids[random.randint(0, len(vids))]
-
-                        print(rFile)
-
-                        print("Opening: " +                                                     #   Display button press
-                         (os.path.splitext(os.path.basename(rFile))[0]))                        #   Shows the name of file opened with out the directory or the file extension
-
-                        startfile(rFile)
-
-                    elif filterSel == 'tv shows':
-                        print('Finding TV show')
-                        for jonVid in glob.glob("./media/tvshows/**/*.jonVid", recursive = True):
-                            vids.append(jonVid)
-
-                        rFile = vids[random.randint(0, len(vids))]
-
-                        print(rFile)
-
-                        print("Opening: " +                                                     #   Display button press
-                         (os.path.splitext(os.path.basename(rFile))[0]))                        #   Shows the name of file opened with out the directory or the file extension
-
-                        startfile(rFile)
+                            print("Opening: " +
+                             os.path.splitext(os.path.basename(rFile))[0])
+                        
+                            startfile(rFile)
 
                     else:
-
-                        for jonVid in glob.glob("./media/**/*.jonVid", recursive = True):
-                             vids.append(jonVid)
+                        for jonVid in glob.glob('media/**/*.jonVid', recursive = True):
+                            vids.append(jonVid)
 
                         rFile = vids[random.randint(0, len(vids))]
-
-                        print('No filter')
-
                         print(rFile)
 
                         print("Opening: " +                                                     #   Display button press
                          (os.path.splitext(os.path.basename(rFile))[0]))                        #   Shows the name of file opened with out the directory or the file extension
 
                         startfile(rFile)
+
         #   /BUTTON PUSH
         #   --------------
 
